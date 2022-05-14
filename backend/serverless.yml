@@ -57,7 +57,6 @@ functions:
 
   # TODO: Configure this function - 
   # Provide iamRoleStatements property for performing Actions on DynamoDB 
-  # => DONE
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -71,8 +70,9 @@ functions:
         Action:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_CREATED_AT_INDEX}
+
   # TODO: Configure this function - 
-  # Provide iamRoleStatements property. Decide the Actions and AWS Resource. => DONE
+  # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
   # To refer to an AWS resource defined in the "Resources" section, you can use "Resource: !GetAtt <resource-name>.Arn"
   # To validate incoming HTTP requests, we have provided the request schemas in function definition below. 
   CreateTodo:
@@ -94,10 +94,10 @@ functions:
 
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
-  # iamRoleStatements => DONE
-  # CORS => DONE
-  # Authorizer => DONE
-  # schemas => DONE
+  # iamRoleStatements
+  # CORS
+  # Authorizer
+  # schemas
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
     events:
@@ -117,9 +117,9 @@ functions:
 
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
-  # iamRoleStatements => DONE
-  # CORS => DONE
-  # Authorizer => DONE
+  # iamRoleStatements
+  # CORS
+  # Authorizer
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
     events:
@@ -136,9 +136,9 @@ functions:
 
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
-  # iamRoleStatements => DONE
-  # CORS => DONE
-  # Authorizer => DONE
+  # iamRoleStatements
+  # CORS
+  # Authorizer
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
@@ -163,7 +163,6 @@ resources:
     # Add necessary AWS resources. You will need at least the following AWS resources
     # TODO: Fill the properties
     # Feel free to change the names as you like. 
-    # => DONE
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
@@ -176,7 +175,6 @@ resources:
           Ref: ApiGatewayRestApi
           
     # TODO: Create a DynamoDB table with local secondary index and a composite key
-    # => DONE
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -206,7 +204,6 @@ resources:
 
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
-    # => DONE
     AttachmentsBucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -228,7 +225,6 @@ resources:
 
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
-    # => DONE
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
