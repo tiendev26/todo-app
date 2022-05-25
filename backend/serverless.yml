@@ -1,7 +1,7 @@
 # TODO: Change the name of the org 
 org: 49shine
-app: serverless-todo-app
-service: serverless-todo-app-service
+app: capstone-todo-app
+service: todo-service
 
 plugins:
   - serverless-webpack
@@ -23,9 +23,10 @@ provider:
   # Use these variables in the functions and resouorces section below. For example, 
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
-    TODOS_TABLE: Todos-${self:provider.stage}-49shine
-    TODOS_CREATED_AT_INDEX: CreatedAtIndex-49shine
-    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}-49shine
+    TODOS_TABLE: Todos-${self:provider.stage}-table
+    TODOS_CREATED_AT_INDEX: CreatedAtIndex-index
+    TODOS_DUE_DATE_INDEX: DueDateIndex-index
+    ATTACHMENT_S3_BUCKET: capstone-${self:provider.stage}-bucket
     SIGNED_URL_EXPIRATION: 300
 
   logs:
@@ -40,7 +41,6 @@ provider:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
           Resource: "*"
-
 
 custom:
   documentation:
@@ -70,6 +70,20 @@ functions:
         Action:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_CREATED_AT_INDEX}
+
+  GetTodosByDueDate:
+    handler: src/lambda/http/getTodosByDueDate.handler
+    events:
+      - http:
+          method: get
+          path: todos/duedate/{sortby}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_DUE_DATE_INDEX}
 
   # TODO: Configure this function - 
   # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
@@ -186,6 +200,8 @@ resources:
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
+          - AttributeName: dueDate
+            AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
@@ -198,6 +214,14 @@ resources:
               - AttributeName: userId
                 KeyType: HASH
               - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: ${self:provider.environment.TODOS_DUE_DATE_INDEX}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: dueDate
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

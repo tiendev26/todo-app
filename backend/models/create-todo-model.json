@@ -9,11 +9,15 @@
     },
     "dueDate": {
       "type": "string"
+    },
+    "priority": {
+      "type": "string"
     }
   },
   "required": [
     "name",
-    "dueDate"
+    "dueDate",
+    "priority"
   ],
   "additionalProperties": false
 }

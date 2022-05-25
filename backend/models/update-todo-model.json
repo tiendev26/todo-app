@@ -12,12 +12,16 @@
     },
     "done": {
       "type": "boolean"
+    },
+    "priority": {
+      "type": "string"
     }
   },
   "required": [
     "name",
     "dueDate",
-    "done"
+    "done",
+    "priority"
   ],
   "additionalProperties": false
 }

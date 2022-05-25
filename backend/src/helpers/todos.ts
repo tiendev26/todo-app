@@ -6,8 +6,9 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
-// import * as createError from 'http-errors'
 import * as AWS from 'aws-sdk'
+import { APIGatewayProxyEvent } from 'aws-lambda'
+import { PromiseResult } from 'aws-sdk/lib/request'
 
 const logger = createLogger('Todos business logic')
 
@@ -21,13 +22,24 @@ const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 // TODO: Implement businessLogic
 const todoAccess = new TodosAccess();
 const attachmentUtils = new AttachmentUtils();
-export async function getAllTodos(userId: string): Promise<TodoItem[]> {
-  return todoAccess.getAllTodos(userId);
+export async function getAllTodos(
+  userId: string,
+  event: APIGatewayProxyEvent
+): Promise<
+  PromiseResult<AWS.DynamoDB.DocumentClient.QueryOutput, AWS.AWSError>
+> {
+  return todoAccess.getAllTodos(userId, event);
 }
 
-export async function createTodo(userId: string, createTodoRequest: CreateTodoRequest): Promise<TodoItem> {
+export async function getAllTodosByDueDate(userId: string, event: APIGatewayProxyEvent): Promise<PromiseResult<AWS.DynamoDB.DocumentClient.QueryOutput, AWS.AWSError>> {
+  return todoAccess.getAllTodosByDueDate(userId, event);
+}
 
-  const itemId = uuid.v4()
+export async function createTodo(
+  userId: string,
+  createTodoRequest: CreateTodoRequest
+): Promise<TodoItem> {
+  const itemId = uuid.v4();
 
   return await todoAccess.createTodo({
     todoId: itemId,
@@ -35,16 +47,22 @@ export async function createTodo(userId: string, createTodoRequest: CreateTodoRe
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
     createdAt: new Date().toISOString(),
-    done: false
-  })
+    done: false,
+    priority: createTodoRequest.priority,
+  });
 }
 
-export async function updateTodo(todoId: string, userId: string, updateTodoRequest: UpdateTodoRequest): Promise<TodoUpdate> {
+export async function updateTodo(
+  todoId: string,
+  userId: string,
+  updateTodoRequest: UpdateTodoRequest
+): Promise<TodoUpdate> {
   return await todoAccess.updateTodo(todoId, userId, {
     name: updateTodoRequest.name,
     dueDate: updateTodoRequest.dueDate,
-    done: updateTodoRequest.done
-  })
+    done: updateTodoRequest.done,
+    priority: updateTodoRequest.priority,
+  });
 }
 
 export async function deleteTodo(todoId: string, userId: string) {

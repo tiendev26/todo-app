@@ -12,3 +12,44 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.priority {
+  display: flex !important;
+  align-items: center;
+}
+
+.priority span {
+  margin-right: 10px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex .column {
+  width: unset !important;
+}
+
+.flex .column:last-child {
+  flex: 1;
+}
+
+.pagination-custom {
+  text-align: center;
+}
+
+.auth span {
+  margin-right: 10px !important;
+}
+
+.task-done {
+  text-decoration: line-through;
+}
+
+.sort-column {
+  cursor: pointer;
+}
+
+.sort-column .icon {
+  margin-left: 10px;
+}

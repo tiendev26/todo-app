@@ -4,17 +4,29 @@ import { CreateTodoRequest } from '../types/CreateTodoRequest';
 import Axios from 'axios'
 import { UpdateTodoRequest } from '../types/UpdateTodoRequest';
 
-export async function getTodos(idToken: string): Promise<Todo[]> {
+export async function getTodos(idToken: string, nextKey?: string | null): Promise<any> {
   console.log('Fetching todos')
-
-  const response = await Axios.get(`${apiEndpoint}/todos`, {
+  const url = (nextKey === undefined || nextKey === '') ? `${apiEndpoint}/todos?limit=5` : `${apiEndpoint}/todos?limit=5&nextKey=${nextKey}`
+  const response = await Axios.get(url, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
     },
   })
-  console.log('Todos:', response.data)
-  return response.data.items
+
+  return response.data
+}
+
+export async function getTodosByDueDate(idToken: string, sortby: string, nextKey?: string | null): Promise<any> {
+  const url = (nextKey === undefined || nextKey === '') ? `${apiEndpoint}/todos/duedate/${sortby}?limit=5` : `${apiEndpoint}/todos/duedate/${sortby}?limit=5&nextKey=${nextKey}`
+  const response = await Axios.get(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    },
+  })
+
+  return response.data
 }
 
 export async function createTodo(

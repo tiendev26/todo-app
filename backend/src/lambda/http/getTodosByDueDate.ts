@@ -4,7 +4,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 
-import { getAllTodos } from '../../helpers/todos'
+import { getAllTodosByDueDate } from '../../helpers/todos'
 import { encodeNextKey, getUserId } from '../utils';
 
 // TODO: Get all TODO items for a current user
@@ -13,7 +13,7 @@ export const handler = middy(
     // Write your code here
     const userId = getUserId(event)
     try {
-      const todos = await getAllTodos(userId, event)
+      const todos = await getAllTodosByDueDate(userId, event)
       return {
         statusCode: 200,
         body: JSON.stringify({
@@ -21,15 +21,14 @@ export const handler = middy(
           nextKey: encodeNextKey(todos.LastEvaluatedKey)
         })
       }
-    } catch (error) {
+    } catch (e) {
       return {
         statusCode: 400,
         body: JSON.stringify({
-          error
+          error: 'Invalid parameters'
         })
       }
     }
-
   });
 handler
 .use(httpErrorHandler())

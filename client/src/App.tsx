@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link, Route, Router, Switch } from 'react-router-dom'
-import { Grid, Menu, Segment } from 'semantic-ui-react'
+import { Grid, Icon, Menu, Segment } from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
 import { EditTodo } from './components/EditTodo'
@@ -68,14 +68,16 @@ export default class App extends Component<AppProps, AppState> {
   logInLogOutButton() {
     if (this.props.auth.isAuthenticated()) {
       return (
-        <Menu.Item name="logout" onClick={this.handleLogout}>
-          Log Out
+        <Menu.Item className='auth' name="logout" onClick={this.handleLogout}>
+          <span>Log Out</span>
+          <Icon name='sign-out'/>
         </Menu.Item>
       )
     } else {
       return (
-        <Menu.Item name="login" onClick={this.handleLogin}>
-          Log In
+        <Menu.Item className='auth' name="login" onClick={this.handleLogin}>
+          <span> Log In</span>
+          <Icon name='sign-in'/>
         </Menu.Item>
       )
     }
